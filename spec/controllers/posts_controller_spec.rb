@@ -65,6 +65,30 @@ RSpec.describe PostsController, :type => :controller do
     end
   end
 
+    describe "POST create" do
+      context "when creating a post" do
+        it "creates the requested post as @post" do
+          post :create, {post: valid_attributes}, valid_session
+          expect(Post.find_by(user_id: valid_session[:user_id])).to be_present
+        end
+
+        it "assigns the requested post to @post" do
+          post :create, {post: valid_attributes}, valid_session
+          expect(assigns(:post)).to eq(Post.find_by(user_id: valid_session[:user_id]))
+        end
+
+        it "redirects to all posts" do
+          post :create, {post: valid_attributes}, valid_session
+          expect(response).to redirect_to(posts_path)
+        end
+      end
+
+    context "user not signed in when trying to create new post" do
+      it "redirects user to login path" do
+		get :new, {}
+		expect(response(:status)).to redirect_to(login_path)
+      end
+    end
 
     describe "DELETE destroy" do
       it "destroys the requested post" do
