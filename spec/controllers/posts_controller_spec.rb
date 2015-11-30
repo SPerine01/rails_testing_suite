@@ -50,6 +50,13 @@ RSpec.describe PostsController, :type => :controller do
     end
   end
 
+  describe "GET new" do
+  	it "assigns a new post as @post" do
+  		get :new, valid_session
+  		expect(assigns(:post)).to be_new(Post)
+  	end
+  end
+
   describe "GET show" do
     it "assigns the requested post as @post" do
       post = Post.create! valid_attributes
@@ -57,3 +64,17 @@ RSpec.describe PostsController, :type => :controller do
       expect(assigns(:post)).to eq(post)
     end
   end
+
+
+    describe "DELETE destroy" do
+      it "destroys the requested post" do
+        delete :destroy, { :id => post.to_param, :user_id => user.id }, valid_session
+        expect(Post.find_by(user_id: valid_session[:user_id])).to eq(nil)
+      end
+
+      it "redirects to the posts list" do
+      	post = Post.create! valid_attributes
+        delete :destroy, { :id => post.to_param, :user_id => user.id }, valid_session
+        expect(response).to redirect_to(user_posts_url)
+      end
+    end
